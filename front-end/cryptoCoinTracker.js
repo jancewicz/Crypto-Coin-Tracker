@@ -29,3 +29,28 @@ const cryptoChart = new Chart(ctx, {
         }
     }
 });
+
+
+function getCoinAPI() {
+    let coinData;
+    fetch('http://127.0.0.1:8000/crypto')
+        .then(response => response.json())
+        .then(data => {
+            coinData = data;
+            console.log(coinData);
+        })
+        .catch(error => {
+            console.log(error)
+        });
+
+    coinData.forEach((element) => {
+        // document.getElementById("crypto-logo").innerHTML = <img src="vsfsfs.jpg"></img>
+        document.getElementById("short-name").innerText = element.short;
+        document.getElementById("coin-name").innerText = element.full_name;
+        document.getElementById("coin-amout").innerText = element.coin_amout;
+        document.getElementById("average-buy-cost").innerText = element.avg_cost;
+        document.getElementById("percent-pnl-increase").innerText = element.todays_pnl_increase;
+    })
+
+}
+getCoinAPI();
