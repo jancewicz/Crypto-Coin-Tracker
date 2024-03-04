@@ -20,44 +20,56 @@
                 <li><a href="#">Contact</a></li>
             </ul>
         </nav>
-        <div class="main-header"></div>
+        <div class="main-header">
+            <div class="dropdown">
+                <div class="select">
+                    <span class="selected">Bitcoin</span>
+                    <div class="caret"></div>
+                </div>
+                <ul class="menu">
+                    <li class="active" id="bitcoin">Bitcoin</li>
+                    <li id="ethereum">Ethereum</li>
+                    <li id="solana">Solana</li>
+                    <li id="bnb">BNB</li>
+                </ul>
+            </div>
+        </div>
         <div class="main">
             <div class="left-sector">
                 <canvas id="my-chart"></canvas>
             </div>
             <div class="right-sector">
-                <div class="balance">
-                    <h4>Your total balance:</h4>
-                    <h1>20000 $</h1>
+                <div class="current-price-display">
+                    <h4>Current price:</h4>
+                    <h1 id="current-price-value"></h1>
                     <div class="pnl">
-                        <p>Todays PNL: </p>
-                        <p id="pnl-value">+3,25%</p>
+                        <p id="price-change"></p>
+                        <p id="percent-change"></p>
                     </div>
                 </div>
                 <hr>
                 <div class="wallet">
-                    <h2>Balance:</h2>
+                    <h2>Info:</h2>
                     <div>
                         <div class="coin">
                             <div class="left-coin-sector">
                                 <div id="logo">
                                     <div id="crypto-logo">#</div>
-                                    <h3 id="short-name">ETH</h3>
+                                    <h3 id="short-name"></h3>
                                 </div>
                                 <div>
-                                    <p class="coin-description" id="coin-name">Etherum</p>
-                                    <p class="coin-description">Average cost: </p>
-                                    <p class="coin-description">Today's PNL</p>
+                                    <p class="coin-description" id="coin-name"></p>
+                                    <p class="coin-description">Highest price - 24h: </p>
+                                    <p class="coin-description">Lowest price - 24h: </p>
+                                    <p class="coin-description">Volume 24h:</p>
                                 </div>
                             </div>
                             <div class="right-coin-sector">
                                 <div>
-                                    <h3 id="coin-amout">0,2</h3>
-                                </div>
-                                <div>
-                                    <p class="coin-description" id="crypto-in-cash">400$</p>
-                                    <p class="coin-description" id="average-buy-cost">2500$</p>
-                                    <p class="coin-description" id="percent-pnl-increase">+14%</p>
+                                    <p class="coin-description" id="crypto-in-cash"></p>
+                                    <p class="coin-description" id="highest-coin-price"></p>
+                                    <p class="coin-description" id="lowest-coin-price"></p>
+                                    <p class="coin-description" id="market-cap-volume"></p>
                                 </div>
                             </div>
                         </div>
@@ -66,7 +78,16 @@
                 </div>
             </div>
         </div>
-        <div class="footer"></div>
+        <div class="footer">
+            <div class="time-buttons">
+                <button class="time-button" type="button" id="year">1Y</button>
+                <button class="time-button" type="button" id="half-year">6M</button>
+            </div>
+            <div class="signature">
+                <div id="find-me">FIND ME ON GITHUB</div>
+                <img src="./icons/ghlogo.png" id="git-hub-logo">
+            </div>
+        </div>
     </div>
     <script src="cryptoCoinTracker.js"></script>
 </body>

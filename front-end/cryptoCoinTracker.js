@@ -1,56 +1,199 @@
-const timeData = [1625097600000, 1625184000000, 1625270400000, 1625356800000, 1625443200000];
-const cryptoValues = [40000, 42000, 38000, 45000, 43000];
+let time;
+let currentCoin = "BTC"
+let globalCoinData;
 
-const formattedTimeData = timeData.map(time => new Date(time).toLocaleDateString());
+const coinSymbolsMap = new Map();
+coinSymbolsMap.set('BTC', "Bitcoin");
+coinSymbolsMap.set('ETH', "Ethereum");
+coinSymbolsMap.set('SOL', "Solana");
+coinSymbolsMap.set('BNB', "BNB");
 
-const ctx = document.getElementById('my-chart').getContext('2d');
+let timeData = [];
+let cryptoValues = [];
 
-const cryptoChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: formattedTimeData,
-        datasets: [{
-            label: 'Cryptocurrency Value',
-            data: cryptoValues,
-            borderColor: 'rgba(75, 192, 192, 1)',
-            borderWidth: 2,
-            fill: false,
-            backgroundColor: 'rgba(75, 192, 192, 0.2)'
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-            xAxes: [{
-                type: 'linear',
-                position: 'bottom'
-            }]
-        }
+function adjustTimeData(data) {
+    /// iter over 500 arrays as binance gives array of 500 objects each representing one day
+    for (let i = 0; i < 365; i++) {
+        const dateObject = new Date(data[135 + i - 1].date);
+        timeData.push(dateObject.getTime());
+        cryptoValues.push(data[135 + i - 1].close)
     }
+    printChart();
+    timeData = [];
+    cryptoValues = [];
+}
+
+const selectCoinDropdown = () => {
+    const dropdowns = document.querySelectorAll(".dropdown");
+    dropdowns.forEach(dropdown => {
+        const select = dropdown.querySelector(".select");
+        const caret = dropdown.querySelector(".caret");
+        const menu = dropdown.querySelector(".menu");
+        const options = dropdown.querySelectorAll(".menu li");
+        const selected = dropdown.querySelector(".selected");
+
+        select.addEventListener("click", () => {
+            select.classList.toggle("selected-clicked");
+            caret.classList.toggle("caret-rotate");
+            menu.classList.toggle("menu-open");
+        });
+
+        options.forEach(option => {
+            option.addEventListener("click", () => {
+                selected.innerText = option.innerText;
+                select.classList.remove("select-clicked");
+                caret.classList.remove("caret-rotate");
+                menu.classList.remove("menu-open");
+                options.forEach(option => {
+                    option.classList.remove("active");
+                });
+                option.classList.add("active");
+            });
+        });
+    });
+};
+
+async function getCoinData(symbol) {
+    globalCoinData = await fetchPriceData(symbol);
+    console.log(globalCoinData);
+
+    updateUserDisplay(globalCoinData);
+    updateDetails(globalCoinData);
+    appendCoinNameToHTML();
+    adjustTimeData(globalCoinData)
+}
+
+async function fetchPriceData(symbol) {
+    const response = await fetch(`https://api.binance.com/api/v3/klines?symbol=${symbol}&interval=1d`);
+    const data = await response.json();
+
+    return data.map(element => ({
+        date: new Date(element[0]),
+        open: parseFloat(element[1]),
+        high: parseFloat(element[2]),
+        low: parseFloat(element[3]),
+        close: parseFloat(element[4]),
+        volume: parseFloat(element[5]),
+        closeTime: new Date(element[6]),
+        quoteAssetVolume: parseFloat(element[7]),
+        numberOfTrades: parseInt(element[8]),
+        takerBuyBaseAssetVolume: parseFloat(element[9]),
+        takerBuyQuoteAssetVolume: parseFloat(element[10]),
+        ignore: parseFloat(element[11])
+    }));
+}
+
+function updateUserDisplay(data) {
+    let currentCoinPrice = data[data.length - 1].close;
+    let coinPriceDayBefore = data[data.length - 2].close;
+
+    let priceDifference = currentCoinPrice - coinPriceDayBefore;
+    let countClosePercentage = (100 * currentCoinPrice) / coinPriceDayBefore - 100;
+
+    console.log(countClosePercentage);
+    console.log(priceDifference);
+
+    document.getElementById("current-price-value").innerText = `${currentCoinPrice} $`;
+
+    if (priceDifference > 0) {
+        document.getElementById("price-change").innerText = `+${priceDifference.toFixed(2)} $`;
+        document.getElementById("percent-change").innerText = `(+${countClosePercentage.toFixed(2)}%)`;
+        document.getElementById("percent-change").style.cssText = "color: #19be1b;"
+        document.getElementById("price-change").style.cssText = "color: #19be1b;"
+    } else {
+        document.getElementById("price-change").innerText = `${priceDifference.toFixed(2)} $`;
+        document.getElementById("percent-change").innerText = `(${countClosePercentage.toFixed(2)}%)`;
+        document.getElementById("percent-change").style.cssText = "color: #e00b0b;"
+        document.getElementById("price-change").style.cssText = "color: #e00b0b;"
+    }
+}
+
+function updateDetails(data) {
+    let dailyVolume = data[data.length - 1].volume;
+    document.getElementById("market-cap-volume").innerText = `${dailyVolume.toFixed(2)}`;
+    let low = data[data.length - 1].low;
+    document.getElementById("lowest-coin-price").innerText = `${low.toFixed(2)}`;
+    let high = data[data.length - 1].high;
+    document.getElementById("highest-coin-price").innerText = `${high.toFixed(2)}`;
+}
+
+
+function appendCoinNameToHTML() {
+    document.getElementById("coin-name").innerText = coinSymbolsMap.get(currentCoin);
+    document.getElementById("short-name").innerText = currentCoin;
+}
+
+
+const ethereumButton = document.getElementById("ethereum");
+ethereumButton.addEventListener("click", () => {
+    currentCoin = "ETH";
+    getCoinData(`${currentCoin}USDT`);
+});
+
+const bitcoinButton = document.getElementById("bitcoin");
+bitcoinButton.addEventListener("click", () => {
+    currentCoin = "BTC";
+    getCoinData(`${currentCoin}USDT`);
+});
+
+const solanaButton = document.getElementById("solana");
+solanaButton.addEventListener("click", () => {
+    currentCoin = "SOL";
+    getCoinData(`${currentCoin}USDT`);
+});
+
+const bnbButton = document.getElementById("bnb");
+bnbButton.addEventListener("click", () => {
+    currentCoin = "BNB";
+    getCoinData(`${currentCoin}USDT`);
+});
+
+const oneYearButton = document.getElementById("year");
+oneYearButton.addEventListener("click", () => {
+    console.log("1Y")
+});
+
+const sixMonthsButton = document.getElementById("half-year");
+sixMonthsButton.addEventListener("click", () => {
+    console.log("6m")
 });
 
 
-function getCoinAPI() {
-    let coinData;
-    fetch('http://127.0.0.1:8000/crypto')
-        .then(response => response.json())
-        .then(data => {
-            coinData = data;
-            console.log(coinData);
-        })
-        .catch(error => {
-            console.log(error)
-        });
+getCoinData(`${currentCoin}USDT`);
+selectCoinDropdown();
 
-    coinData.forEach((element) => {
-        // document.getElementById("crypto-logo").innerHTML = <img src="vsfsfs.jpg"></img>
-        document.getElementById("short-name").innerText = element.short;
-        document.getElementById("coin-name").innerText = element.full_name;
-        document.getElementById("coin-amout").innerText = element.coin_amout;
-        document.getElementById("average-buy-cost").innerText = element.avg_cost;
-        document.getElementById("percent-pnl-increase").innerText = element.todays_pnl_increase;
-    })
+let cryptoChart = null;
+function printChart() {
+    if (cryptoChart) {
+        cryptoChart.destroy();
+    }
 
+    const formattedTimeData = timeData.map(time => new Date(time).toLocaleDateString());
+
+    const ctx = document.getElementById('my-chart').getContext('2d');
+
+    cryptoChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: formattedTimeData,
+            datasets: [{
+                label: 'Cryptocurrency Value',
+                data: cryptoValues,
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                fill: false,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)'
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                xAxes: [{
+                    type: 'linear',
+                    position: 'bottom'
+                }]
+            }
+        }
+    });
 }
-getCoinAPI();

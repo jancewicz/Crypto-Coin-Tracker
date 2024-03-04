@@ -7,12 +7,11 @@
 
 body {
     margin: 0;
-    font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 nav {
     background-color: #800080;
-    /* Violet color */
     padding: 10px;
 }
 
@@ -37,7 +36,101 @@ nav a {
 
 nav a:hover {
     background-color: #9932CC;
-    /* Darker violet color on hover */
+}
+
+.main-header {
+    width: 100%;
+    height: 10vh;
+    background-color: var(--main-header-color);
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.dropdown {
+    position: relative;
+    min-width: 15em;
+    margin: 0.5em;
+}
+
+.dropdown * {
+    box-sizing: border-box;
+}
+
+.select {
+    background-color: #2a2f3b;
+    color: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 2px solid #2a2f3b;
+    border-radius: 0.5em;
+    padding: 1em;
+    cursor: pointer;
+
+}
+
+.select-clicked {
+    border: 2px #26489a solid;
+    box-shadow: 0 0 0.8em #26489a;
+}
+
+.select:hover {
+    background: 323741;
+
+}
+
+.caret {
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #fff;
+    transition: 0.3s;
+}
+
+.caret-rotate {
+    transform: rotate(180deg);
+}
+
+.menu {
+    list-style: none;
+    padding: 0.2em 0.5em;
+    background: #323741;
+    border: 1px solid #363a43;
+    box-shadow: 0 0.5em 1em rgba(0, 0, 0, 0.2);
+    border-radius: 0.5em;
+    color: #9fa5b5;
+    position: absolute;
+    top: 3em;
+    left: 60%;
+    width: 100%;
+    transform: translateX(-50%);
+    opacity: 0;
+    display: none;
+    transition: 0.2s;
+    z-index: 1;
+}
+
+.menu li {
+    padding: 0.7em 0.5em;
+    margin: 0.3em 0;
+    border-radius: 0.5em;
+    cursor: pointer;
+}
+
+.menu li:hover {
+    background: #2a2d35;
+}
+
+
+.active {
+    background: #23242a;
+}
+
+.menu-open {
+    display: block;
+    opacity: 1;
 }
 
 .main {
@@ -46,12 +139,6 @@ nav a:hover {
     margin: 0;
     width: 100%;
     height: 80vh;
-}
-
-.main-header {
-    width: 100%;
-    height: 10vh;
-    background-color: var(--main-header-color)
 }
 
 .left-sector {
@@ -73,7 +160,7 @@ nav a:hover {
     flex-direction: column;
 }
 
-.balance {
+.current-price-display {
     width: auto;
     height: 30%;
     color: white;
@@ -147,5 +234,59 @@ hr {
 .right-coin-sector {
     padding: 5px;
     text-align: right;
+    display: flex;
+    align-items: flex-end;
+}
 
+.footer {
+    width: 100%;
+    height: 5vh;
+    background-color: var(--violetRightSector);
+    display: flex;
+    justify-content: space-between;
+}
+
+.time-button {
+    width: 100px;
+    height: 30px;
+    margin: 4px;
+    border-radius: 7px;
+    background-color: #2a2f3b;
+    color: #fff;
+    border-radius: 0.5em;
+}
+
+.time-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-left: 30px;
+
+}
+
+.signature {
+    width: auto;
+    margin-right: 20px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    color: #fff;
+    margin-bottom: 5px;
+
+}
+
+.signature>#find-me {
+    font-size: 20px;
+
+}
+
+#git-hub-logo {
+    width: 2rem;
+    height: 2rem;
+    margin-top: 2px;
+    transition: box-shadow .3s;
+    border-radius: 20px;
+}
+
+#git-hub-logo:hover {
+    box-shadow: 0 0 11px rgba(255, 255, 255, 1);
 }
