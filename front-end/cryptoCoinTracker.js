@@ -18,17 +18,17 @@ function adjustTimeData(data) {
     /// iter over array as binance API gives array of 500 objects each representing one day
     switch (timeFrame) {
         case "year":
-            for (let i = 0; i < 365; i++) {
-                const dateObject = new Date(data[135 + i - 1].date);
+            for (let i = 0; i < 361; i++) {
+                const dateObject = new Date(data[139 + i].date);
                 timeData.push(dateObject.getTime());
-                cryptoValues.push(data[135 + i - 1].close)
+                cryptoValues.push(data[139 + i].close)
             }
             printChart();
             timeData = [];
             cryptoValues = [];
             break;
         case "half year":
-            for (let i = 0; i < 183; i++) {
+            for (let i = 0; i < 184; i++) {
                 const dateObject = new Date(data[317 + i - 1].date);
                 timeData.push(dateObject.getTime());
                 cryptoValues.push(data[317 + i - 1].close)
@@ -38,7 +38,7 @@ function adjustTimeData(data) {
             cryptoValues = [];
             break;
         case "one month":
-            for (let i = 0; i < 31; i++) {
+            for (let i = 0; i < 32; i++) {
                 const dateObject = new Date(data[469 + i - 1].date);
                 timeData.push(dateObject.getTime());
                 cryptoValues.push(data[469 + i - 1].close);
@@ -48,7 +48,6 @@ function adjustTimeData(data) {
             cryptoValues = [];
             break;
     }
-
 }
 
 const selectCoinDropdown = () => {
@@ -107,15 +106,16 @@ async function fetchPriceData(symbol) {
         takerBuyQuoteAssetVolume: parseFloat(element[10]),
         ignore: parseFloat(element[11])
     }));
+
 }
+
 
 function updateUserDisplay(data) {
     let currentCoinPrice = data[data.length - 1].close;
-    let coinPriceDayBefore = data[data.length - 2].close;
+    let coinPriceDayBefore = data[data.length - 3].close;
 
     let priceDifference = currentCoinPrice - coinPriceDayBefore;
     let countClosePercentage = (100 * currentCoinPrice) / coinPriceDayBefore - 100;
-
 
     document.getElementById("current-price-value").innerText = `${currentCoinPrice} $`;
 
@@ -133,14 +133,13 @@ function updateUserDisplay(data) {
 }
 
 function updateDetails(data) {
-    let dailyVolume = data[data.length - 1].volume;
+    let dailyVolume = data[data.length - 2].volume;
     document.getElementById("market-cap-volume").innerText = `${dailyVolume.toFixed(2)}`;
-    let low = data[data.length - 1].low;
+    let low = data[data.length - 2].low;
     document.getElementById("lowest-coin-price").innerText = `${low.toFixed(2)}`;
-    let high = data[data.length - 1].high;
+    let high = data[data.length - 2].high;
     document.getElementById("highest-coin-price").innerText = `${high.toFixed(2)}`;
 }
-
 
 function appendCoinNameToHTML() {
     document.getElementById("coin-name").innerText = coinSymbolsMap.get(currentCoin);
@@ -153,7 +152,6 @@ function appendCoinLogoToHTML(coinName) {
     img.src = `./images/${coinName} logo.png`
     img.id = "png-image";
     parentDiv.appendChild(img);
-
 }
 
 function deleteExistingLogo() {
@@ -212,7 +210,6 @@ oneMonth.addEventListener("click", () => {
     getCoinData(`${currentCoin}USDT`);
 
 });
-
 
 getCoinData(`${currentCoin}USDT`);
 selectCoinDropdown();
