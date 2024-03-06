@@ -1,3 +1,5 @@
+console.log((365 / 2).toFixed())
+
 let time;
 let currentCoin = "BTC"
 let globalCoinData;
@@ -10,17 +12,43 @@ coinSymbolsMap.set('BNB', "BNB");
 
 let timeData = [];
 let cryptoValues = [];
+let timeFrame = "year";
 
 function adjustTimeData(data) {
-    /// iter over 500 arrays as binance gives array of 500 objects each representing one day
-    for (let i = 0; i < 365; i++) {
-        const dateObject = new Date(data[135 + i - 1].date);
-        timeData.push(dateObject.getTime());
-        cryptoValues.push(data[135 + i - 1].close)
+    /// iter over array as binance API gives array of 500 objects each representing one day
+    switch (timeFrame) {
+        case "year":
+            for (let i = 0; i < 365; i++) {
+                const dateObject = new Date(data[135 + i - 1].date);
+                timeData.push(dateObject.getTime());
+                cryptoValues.push(data[135 + i - 1].close)
+            }
+            printChart();
+            timeData = [];
+            cryptoValues = [];
+            break;
+        case "half year":
+            for (let i = 0; i < 183; i++) {
+                const dateObject = new Date(data[317 + i - 1].date);
+                timeData.push(dateObject.getTime());
+                cryptoValues.push(data[317 + i - 1].close)
+            }
+            printChart();
+            timeData = [];
+            cryptoValues = [];
+            break;
+        case "one month":
+            for (let i = 0; i < 31; i++) {
+                const dateObject = new Date(data[469 + i - 1].date);
+                timeData.push(dateObject.getTime());
+                cryptoValues.push(data[469 + i - 1].close);
+            }
+            printChart();
+            timeData = [];
+            cryptoValues = [];
+            break;
     }
-    printChart();
-    timeData = [];
-    cryptoValues = [];
+
 }
 
 const selectCoinDropdown = () => {
@@ -33,7 +61,7 @@ const selectCoinDropdown = () => {
         const selected = dropdown.querySelector(".selected");
 
         select.addEventListener("click", () => {
-            select.classList.toggle("selected-clicked");
+            select.classList.toggle("select-clicked");
             caret.classList.toggle("caret-rotate");
             menu.classList.toggle("menu-open");
         });
@@ -55,8 +83,6 @@ const selectCoinDropdown = () => {
 
 async function getCoinData(symbol) {
     globalCoinData = await fetchPriceData(symbol);
-    console.log(globalCoinData);
-
     updateUserDisplay(globalCoinData);
     updateDetails(globalCoinData);
     appendCoinNameToHTML();
@@ -90,8 +116,6 @@ function updateUserDisplay(data) {
     let priceDifference = currentCoinPrice - coinPriceDayBefore;
     let countClosePercentage = (100 * currentCoinPrice) / coinPriceDayBefore - 100;
 
-    console.log(countClosePercentage);
-    console.log(priceDifference);
 
     document.getElementById("current-price-value").innerText = `${currentCoinPrice} $`;
 
@@ -123,45 +147,76 @@ function appendCoinNameToHTML() {
     document.getElementById("short-name").innerText = currentCoin;
 }
 
+function appendCoinLogoToHTML(coinName) {
+    const parentDiv = document.getElementById("crypto-logo");
+    const img = document.createElement("img");
+    img.src = `./images/${coinName} logo.png`
+    img.id = "png-image";
+    parentDiv.appendChild(img);
+
+}
+
+function deleteExistingLogo() {
+    const parentDiv = document.getElementById("crypto-logo");
+    const coinLogoDiv = document.getElementById("png-image");
+    coinLogoDiv.remove();
+};
 
 const ethereumButton = document.getElementById("ethereum");
 ethereumButton.addEventListener("click", () => {
     currentCoin = "ETH";
     getCoinData(`${currentCoin}USDT`);
+    deleteExistingLogo();
+    appendCoinLogoToHTML("ethereum");
 });
 
 const bitcoinButton = document.getElementById("bitcoin");
 bitcoinButton.addEventListener("click", () => {
     currentCoin = "BTC";
     getCoinData(`${currentCoin}USDT`);
+    deleteExistingLogo();
+    appendCoinLogoToHTML("bitcoin");
 });
 
 const solanaButton = document.getElementById("solana");
 solanaButton.addEventListener("click", () => {
     currentCoin = "SOL";
     getCoinData(`${currentCoin}USDT`);
+    deleteExistingLogo();
+    appendCoinLogoToHTML("solana");
 });
 
 const bnbButton = document.getElementById("bnb");
 bnbButton.addEventListener("click", () => {
     currentCoin = "BNB";
     getCoinData(`${currentCoin}USDT`);
+    deleteExistingLogo();
+    appendCoinLogoToHTML("bnb");
 });
 
 const oneYearButton = document.getElementById("year");
 oneYearButton.addEventListener("click", () => {
-    console.log("1Y")
+    timeFrame = "year";
+    getCoinData(`${currentCoin}USDT`);
 });
 
 const sixMonthsButton = document.getElementById("half-year");
 sixMonthsButton.addEventListener("click", () => {
-    console.log("6m")
+    timeFrame = "half year";
+    getCoinData(`${currentCoin}USDT`);
+
+});
+const oneMonth = document.getElementById("one-month");
+oneMonth.addEventListener("click", () => {
+    timeFrame = "one month";
+    getCoinData(`${currentCoin}USDT`);
+
 });
 
 
 getCoinData(`${currentCoin}USDT`);
 selectCoinDropdown();
-
+// chart.JS demands to destroy existing chart before creating a new one
 let cryptoChart = null;
 function printChart() {
     if (cryptoChart) {

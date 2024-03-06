@@ -71,8 +71,8 @@ nav a:hover {
 }
 
 .select-clicked {
-    border: 2px #26489a solid;
-    box-shadow: 0 0 0.8em #26489a;
+    border: 2px #392467 solid;
+    box-shadow: 0 0 0.8em #392467;
 }
 
 .select:hover {
@@ -226,6 +226,12 @@ hr {
     margin-right: 5px;
 }
 
+#png-image {
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+}
+
 .coin-description {
     margin: 0;
     margin-top: 5px;
@@ -243,7 +249,15 @@ hr {
     height: 5vh;
     background-color: var(--violetRightSector);
     display: flex;
+    flex-direction: row;
     justify-content: space-between;
+}
+
+.time-buttons {
+    display: flex;
+    justify-content: space-around;
+    margin-left: 30px;
+    width: 100vh;
 }
 
 .time-button {
@@ -256,11 +270,8 @@ hr {
     border-radius: 0.5em;
 }
 
-.time-buttons {
-    display: flex;
-    justify-content: space-around;
-    margin-left: 30px;
-
+.time-button:hover {
+    background-color: #2f3442;
 }
 
 .signature {
