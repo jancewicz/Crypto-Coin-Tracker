@@ -1,5 +1,3 @@
-console.log((365 / 2).toFixed())
-
 let time;
 let currentCoin = "BTC"
 let globalCoinData;
